@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Services\AuthService;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
@@ -20,18 +21,37 @@ class LoginController extends Controller
         return Inertia::render('Auth/Login');
     }
 
-    public function authenticate(Request $request)
+    public function authenticate(LoginRequest $request, AuthService $authService)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $response = $authService->login($request->validated());
 
-        if ($validator->fails()) {
+        $token = $response['token'] ?? null;
+
+        if ($token) {
+            session(['token' => $token]);
+
+            return redirect()->route('dashboard');
+        }
+
+        return redirect()
+            ->route('login')
+            ->withErrors($response['messages'] ?? null)
+            ->withInput();
+    }
+
+    public function logout(AuthService $authService)
+    {
+        $response = $authService->logout();
+
+        if ($response->status() === 200) {
+            session()->forget('token');
+            Cache::forget('user');
+
             return redirect()
                 ->route('login')
-                ->withErrors($validator)
-                ->withInput();
+                ->with($response['messages'] ?? null);
         }
+
+        return redirect()->back(303);
     }
 }

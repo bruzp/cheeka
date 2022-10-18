@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,11 +27,16 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('guest')->group(function () {
+    Route::get('register', [RegistrationController::class, 'create'])->name('register');
+    Route::post('register', [RegistrationController::class, 'store'])->name('register');
 
-Route::get('register', [RegistrationController::class, 'create']);
+    Route::get('login', [LoginController::class, 'index'])->name('login');
+    Route::post('login', [LoginController::class, 'authenticate'])->name('login');
+});
 
-Route::get('login', [LoginController::class, 'index'])->name('login');
-Route::post('login', [LoginController::class, 'authenticate'])->name('login');
+Route::middleware('auth')->group(function () {
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});

@@ -22,26 +22,22 @@ const submit = () => {
 
 <template>
     <GuestLayout>
+
         <Head title="Log in" />
 
         <form @submit.prevent="submit">
             <div>
                 <InputLabel for="email" value="Email" />
-                <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus autocomplete="username" />
+                <TextInput id="email" type="text" class="mt-1 block w-full" v-model="form.email" required autofocus
+                    autocomplete="username" />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
             <div class="mt-4">
                 <InputLabel for="password" value="Password" />
-                <TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="current-password" />
+                <TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required
+                    autocomplete="current-password" />
                 <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                </label>
             </div>
 
             <div class="flex items-center justify-end mt-4">

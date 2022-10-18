@@ -12,5 +12,6 @@ return [
     |
     */
 
-    'basic_token' => env('APP_TOKEN', null),
+    'url' => env('API_URL', null),
+    'token' => env('APP_TOKEN', null),
 ];
