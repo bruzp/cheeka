@@ -56,6 +56,10 @@ class HandleInertiaRequests extends Middleware
 
     private function getUser()
     {
+        if (!session()->has('token')) {
+            return [];
+        }
+
         if (Cache::has('user')) {
             return Cache::get('user');
         }
